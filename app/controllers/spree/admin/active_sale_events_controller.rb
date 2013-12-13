@@ -15,7 +15,6 @@ module Spree
 
       def destroy
         @active_sale_event = Spree::ActiveSaleEvent.find(params[:id])
-        puts @active_sale_event.inspect
         @active_sale_event.destroy
         respond_with(@active_sale_event) { |format| format.json { render :json => '' } }
       end
