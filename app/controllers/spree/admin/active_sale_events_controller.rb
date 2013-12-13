@@ -8,7 +8,7 @@ module Spree
       respond_to :json, :only => [:update_events]
 
       def show
-        redirect_to(:controller => 'spree/admin/active_sale_events', 
+        redirect_to(:controller => 'spree/admin/active_sale_events',
                     :action => :edit , :id => params[:id], 
                     :active_sale_id => @active_sale.id)
       end
@@ -22,16 +22,6 @@ module Spree
       def update_events
         @active_sale_event.update_attributes(params[:active_sale_event])
         respond_with(@active_sale_event)
-      end
-
-      def create
-          if params[object_name].blank?
-            redirect_to(:controller => 'spree/admin/active_sale_events', 
-                        :action => :new, 
-                        :active_sale_id => @active_sale.id) #and return
-          else
-            super
-          end
       end
 
       protected

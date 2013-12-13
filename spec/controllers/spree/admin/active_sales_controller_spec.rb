@@ -38,7 +38,7 @@ describe Spree::Admin::ActiveSalesController  do
       active_sale = Spree::ActiveSale.create! valid_attributes
       spree_get :index, {}, valid_session
       assigns(:active_sales).include?(active_sale).should be_true
-      assigns(:active_sales).should eq(Spree::ActiveSale.all)
+      assigns(:active_sales).to_a.should eq(Spree::ActiveSale.all.to_a)
     end
   end
 
