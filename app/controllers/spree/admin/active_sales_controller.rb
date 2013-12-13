@@ -50,6 +50,10 @@ module Spree
           object_name = params[:active_sale]
           get_eventable_object(object_name)
         end
+
+        def permitted_resource_params
+          params[object_name].blank? ? nil : params.require(object_name).permit!
+        end
     end
   end
 end

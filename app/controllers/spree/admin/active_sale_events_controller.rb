@@ -2,13 +2,15 @@ module Spree
   module Admin
     class ActiveSaleEventsController < ResourceController
       belongs_to 'spree/active_sale', :find_by => :id
-      before_filter :load_active_sale, :only => [:index]
+      before_filter :load_active_sale, :only => [:index, :show, :create]
       before_filter :parent_id_for_event, :only => [:new, :edit, :create, :update]
       update.before :get_eventable
       respond_to :json, :only => [:update_events]
 
       def show
-        redirect_to( :action => :edit )
+        redirect_to(:controller => 'spree/admin/active_sale_events', 
+                    :action => :edit , :id => params[:id], 
+                    :active_sale_id => @active_sale.id)
       end
 
       def destroy
@@ -22,6 +24,16 @@ module Spree
         respond_with(@active_sale_event)
       end
 
+      def create
+          if params[object_name].blank?
+            redirect_to(:controller => 'spree/admin/active_sale_events', 
+                        :action => :new, 
+                        :active_sale_id => @active_sale.id) #and return
+          else
+            super
+          end
+      end
+
       protected
 
         def collection
@@ -30,13 +42,16 @@ module Spree
           @collection = @search.result.page(params[:page]).per(Spree::ActiveSaleConfig[:admin_active_sale_events_per_page])
         end
 
+
         def load_active_sale
           @active_sale = Spree::ActiveSale.find(params[:active_sale_id])
         end
 
         def build_resource
+          return model_class.new if params[object_name].blank?
           get_eventable unless params[object_name].nil?
-          if parent_data.present?
+          params.require(object_name).permit!
+          if parent_data.present? 
             parent.send(controller_name).build(params[object_name])
           else
             model_class.new(params[object_name])
@@ -61,6 +76,10 @@ module Spree
           parent_id = event[:parent_id]
           event.delete(:parent_id) if event[:parent_id].nil? || event[:parent_id] == "nil"
           parent_id
+        end
+
+        def permitted_resource_params
+          params[object_name].blank? ? nil : params.require(object_name).permit!
         end
     end
   end
