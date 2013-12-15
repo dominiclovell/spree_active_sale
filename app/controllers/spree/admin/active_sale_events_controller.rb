@@ -2,7 +2,7 @@ module Spree
   module Admin
     class ActiveSaleEventsController < ResourceController
       belongs_to 'spree/active_sale', :find_by => :id
-      before_filter :load_active_sale, :only => [:index, :show, :create]
+      before_filter :load_active_sale, :only => [:index, :show, :create, :new]
       before_filter :parent_id_for_event, :only => [:new, :edit, :create, :update]
       update.before :get_eventable
       respond_to :json, :only => [:update_events]
